@@ -6,8 +6,9 @@ import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view.UsersView
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GithubUser
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GithubUsersRepo
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.IScreens
 
-class UsersPresenter(val usersRepo: GithubUsersRepo, val router: Router) : MvpPresenter<UsersView>() {
+class UsersPresenter(private val usersRepo: GithubUsersRepo, private val router: Router, private val screens: IScreens) : MvpPresenter<UsersView>() {
 
     class UsersListPresenter : IUserListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -29,11 +30,11 @@ class UsersPresenter(val usersRepo: GithubUsersRepo, val router: Router) : MvpPr
         loadData()
 
         usersListPresenter.itemClickListener = { itemView ->
-            //TODO: переход на экран пользователя c помощью router.navigateTo
+            router.navigateTo(screens.loginDetails(itemView.pos))
         }
     }
 
-    fun loadData() {
+    private fun loadData() {
         val users = usersRepo.getUsers()
         usersListPresenter.users.addAll(users)
         viewState.updateList()
