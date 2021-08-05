@@ -2,14 +2,9 @@ package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.login
 
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GithubUsersRepo
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GitHubUsersRepository
 
-class LoginDetailsPresenter(private val githubUsersRepo: GithubUsersRepo, private val router: Router) : MvpPresenter<LoginDetailsView>() {
-    private var position: Int? = null
-
-    fun setPosition(position: Int?) {
-        this.position = position
-    }
+class LoginDetailsPresenter(private val gitHubUsersRepository: GitHubUsersRepository, private val router: Router, private val userId: Long?) : MvpPresenter<LoginDetailsView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -17,9 +12,10 @@ class LoginDetailsPresenter(private val githubUsersRepo: GithubUsersRepo, privat
     }
 
     private fun loadUserLoginData() {
-        position?.let {
-            val login = githubUsersRepo.getUsers()[it].login
-            viewState.renderData(login)
+        userId?.let { userId ->
+            gitHubUsersRepository.getLoginByUserId(userId)?.let { login ->
+                viewState.showUser(login)
+            }
         }
     }
 

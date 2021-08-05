@@ -2,12 +2,12 @@ package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments
 
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.IScreens
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.UsersFragmentScreen
 
-class MainPresenter(private val router: Router, private val screens: IScreens) : MvpPresenter<MainView>() {
+class MainPresenter(private val router: Router) : MvpPresenter<MainView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        router.replaceScreen(screens.users())
+        router.replaceScreen(UsersFragmentScreen)
     }
 
     fun backClicked() {

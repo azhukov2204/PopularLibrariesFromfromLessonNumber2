@@ -1,44 +1,36 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.annotation.SuppressLint
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.FragmentUsersBinding
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.presenter.UsersPresenter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GithubUsersRepo
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.AndroidScreens
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GitHubUsersRepositoryFactory
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
 
-class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
+class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, BackButtonListener {
     companion object {
-        @JvmStatic
-        fun newInstance() = UsersFragment()
+        fun newInstance(): Fragment = UsersFragment()
     }
 
-    private val presenter: UsersPresenter by moxyPresenter { UsersPresenter(GithubUsersRepo(), App.instance.router, AndroidScreens()) }
+    private val presenter: UsersPresenter by moxyPresenter {
+        UsersPresenter(GitHubUsersRepositoryFactory.create(), App.instance.router)
+    }
     private var adapter: UsersRVAdapter? = null
-    private var vb: FragmentUsersBinding? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        FragmentUsersBinding.inflate(inflater, container, false).also {
-            vb = it
-        }.root
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        vb = null
-    }
+    private val binding by viewBinding(FragmentUsersBinding::bind)
 
     override fun init() {
-        vb?.rvUsers?.layoutManager = LinearLayoutManager(context)
+        binding.rvUsers.layoutManager = LinearLayoutManager(context)
         adapter = UsersRVAdapter(presenter.usersListPresenter)
-        vb?.rvUsers?.adapter = adapter
+        binding.rvUsers.adapter = adapter
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun updateList() {
         adapter?.notifyDataSetChanged()
     }

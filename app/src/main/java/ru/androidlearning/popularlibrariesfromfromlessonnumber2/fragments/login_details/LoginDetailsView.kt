@@ -1,9 +1,9 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.login_details
 
 import moxy.MvpView
-import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.SingleState
 
-@AddToEndSingle
+@SingleState
 interface LoginDetailsView: MvpView {
-    fun renderData(login: String)
+    fun showUser(login: String)
 }

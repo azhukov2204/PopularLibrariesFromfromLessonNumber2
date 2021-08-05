@@ -4,7 +4,7 @@ import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view.UserItemView
 
 interface IListPresenter<V : IItemView> {
-    var itemClickListener: ((V) -> Unit)?
+    var itemClickListener: ((Long) -> Unit)?
     fun bindView(view: V)
     fun getCount(): Int
 }

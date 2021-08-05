@@ -9,9 +9,7 @@ import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.
 class UsersRVAdapter(private val presenter: IUserListPresenter) : RecyclerView.Adapter<UsersRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply {
-            itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
-        }
+        ViewHolder(ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = presenter.bindView(holder.apply { pos = position })
 
@@ -22,6 +20,10 @@ class UsersRVAdapter(private val presenter: IUserListPresenter) : RecyclerView.A
 
         override fun setLogin(text: String) = with(vb) {
             tvLogin.text = text
+        }
+
+        override fun setOnClickListener(usrId: Long) {
+            itemView.setOnClickListener { presenter.itemClickListener?.invoke(usrId) }
         }
     }
 }

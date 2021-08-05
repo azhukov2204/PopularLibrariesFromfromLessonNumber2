@@ -1,26 +1,15 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments
 
-import android.os.Bundle
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.ActivityMainBinding
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.AndroidScreens
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
 
-class MainActivity : MvpAppCompatActivity(), MainView {
+class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     private val navigator = AppNavigator(this, R.id.container)
-
-    private val presenter by moxyPresenter { MainPresenter(App.instance.router, AndroidScreens()) }
-    private var vb: ActivityMainBinding? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        vb = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(vb?.root)
-    }
+    private val presenter by moxyPresenter { MainPresenter(App.instance.router) }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
