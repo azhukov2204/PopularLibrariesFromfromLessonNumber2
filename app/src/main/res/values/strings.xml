@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">PopularLibrariesFromfromLessonNumber2</string>
+    <string name="app_name">PopularLibrariesFromLessonNumber2</string>
+    <string name="login_selected">Login selected:</string>
+    <string name="return_button_text">Return</string>
 </resources>
