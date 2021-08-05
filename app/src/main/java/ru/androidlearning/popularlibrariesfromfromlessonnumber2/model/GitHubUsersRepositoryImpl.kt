@@ -1,6 +1,6 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.model
 
-class GitHubUsersRepositoryImpl: GitHubUsersRepository {
+class GitHubUsersRepositoryImpl : GitHubUsersRepository {
     private val repositories = listOf(
         GithubUser(1, "login1"),
         GithubUser(2, "login2"),
@@ -9,9 +9,7 @@ class GitHubUsersRepositoryImpl: GitHubUsersRepository {
         GithubUser(5, "login5")
     )
 
-    override fun getUsers(): List<GithubUser> {
-        return repositories
-    }
+    override fun getUsers(): List<GithubUser> = repositories
 
-    override fun getLoginByUserId(userId: Long) = repositories.firstOrNull { githubUser -> githubUser.userId == userId }?.login
+    override fun getLoginByUserId(userId: Long): String = repositories.first { githubUser -> githubUser.userId == userId }.login
 }

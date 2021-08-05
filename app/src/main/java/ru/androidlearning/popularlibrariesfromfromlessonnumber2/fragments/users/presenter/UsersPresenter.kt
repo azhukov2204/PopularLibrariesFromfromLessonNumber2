@@ -1,6 +1,9 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.presenter
 
 import com.github.terrakok.cicerone.Router
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view.UserItemView
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view.UsersView
@@ -30,13 +33,19 @@ class UsersPresenter(private val usersRepository: GitHubUsersRepository, private
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.init()
-        loadData()
+        loadUsersList()
     }
 
-    private fun loadData() {
-        val users = usersRepository.getUsers()
-        usersListPresenter.users.addAll(users)
-        viewState.updateList()
+    private fun loadUsersList() {
+        Observable.fromCallable { usersRepository.getUsers() }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                usersListPresenter.users.addAll(it)
+                viewState.updateList()
+            }, {
+                it.printStackTrace()
+            })
     }
 
     fun backPressed(): Boolean {
