@@ -1,17 +1,22 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.presenter
 
 import com.github.terrakok.cicerone.Router
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
 import moxy.MvpPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view.UserItemView
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view.UsersView
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GitHubUsersRepository
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GithubUser
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.LoginDetailsFragmentScreen
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulers
 
-class UsersPresenter(private val usersRepository: GitHubUsersRepository, private val router: Router) : MvpPresenter<UsersView>() {
+class UsersPresenter(
+    private val usersRepository: GitHubUsersRepository,
+    private val router: Router,
+    private val schedulers: WorkSchedulers
+) : MvpPresenter<UsersView>() {
+    private val disposables = CompositeDisposable()
 
     class UsersListPresenter(private val router: Router) : IUserListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -37,15 +42,24 @@ class UsersPresenter(private val usersRepository: GitHubUsersRepository, private
     }
 
     private fun loadUsersList() {
-        Observable.fromCallable { usersRepository.getUsers() }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                usersListPresenter.users.addAll(it)
-                viewState.updateList()
-            }, {
-                it.printStackTrace()
-            })
+        disposables +=
+            usersRepository.getUsers()
+                .subscribeOn(schedulers.threadIO())
+                .observeOn(schedulers.threadMain())
+                .subscribe(
+                    this::showUsers,
+                    viewState::showError
+                )
+    }
+
+    private fun showUsers(users: List<GithubUser>) {
+        usersListPresenter.users.addAll(users)
+        viewState.updateList()
+    }
+
+    override fun onDestroy() {
+        disposables.dispose()
+        super.onDestroy()
     }
 
     fun backPressed(): Boolean {

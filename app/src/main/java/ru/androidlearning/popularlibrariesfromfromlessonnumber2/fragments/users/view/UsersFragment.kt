@@ -1,6 +1,7 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -12,6 +13,7 @@ import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.Frag
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.presenter.UsersPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GitHubUsersRepositoryFactory
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulersFactory
 
 class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, BackButtonListener {
     companion object {
@@ -19,7 +21,11 @@ class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, 
     }
 
     private val presenter: UsersPresenter by moxyPresenter {
-        UsersPresenter(GitHubUsersRepositoryFactory.create(), App.instance.router)
+        UsersPresenter(
+            usersRepository = GitHubUsersRepositoryFactory.create(),
+            router = App.instance.router,
+            schedulers = WorkSchedulersFactory.create()
+        )
     }
     private var adapter: UsersRVAdapter? = null
     private val binding by viewBinding(FragmentUsersBinding::bind)
@@ -33,6 +39,10 @@ class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, 
     @SuppressLint("NotifyDataSetChanged")
     override fun updateList() {
         adapter?.notifyDataSetChanged()
+    }
+
+    override fun showError(error: Throwable) {
+        Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
     }
 
     override fun backPressed() = presenter.backPressed()
