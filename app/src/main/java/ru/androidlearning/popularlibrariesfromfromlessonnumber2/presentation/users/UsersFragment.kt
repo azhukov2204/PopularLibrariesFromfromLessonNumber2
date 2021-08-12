@@ -1,48 +1,51 @@
-package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.view
+package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.users
 
-import android.annotation.SuppressLint
+import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.FragmentUsersBinding
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.users.presenter.UsersPresenter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GitHubUsersRepositoryFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GithubUserEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.users.adapter.UsersAdapter
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.user.repository.GitHubUsersRepositoryFactory
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulersFactory
 
-class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, BackButtonListener {
+class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, BackButtonListener, UsersAdapter.ItemClickListener {
     companion object {
         fun newInstance(): Fragment = UsersFragment()
     }
 
     private val presenter: UsersPresenter by moxyPresenter {
         UsersPresenter(
-            usersRepository = GitHubUsersRepositoryFactory.create(),
+            usersRepository = GitHubUsersRepositoryFactory.getRepository(),
             router = App.instance.router,
             schedulers = WorkSchedulersFactory.create()
         )
     }
-    private var adapter: UsersRVAdapter? = null
     private val binding by viewBinding(FragmentUsersBinding::bind)
+    private val usersAdapter: UsersAdapter = UsersAdapter(this)
 
-    override fun init() {
-        binding.rvUsers.layoutManager = LinearLayoutManager(context)
-        adapter = UsersRVAdapter(presenter.usersListPresenter)
-        binding.rvUsers.adapter = adapter
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.usersRecyclerView.adapter = usersAdapter
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun updateList() {
-        adapter?.notifyDataSetChanged()
+    override fun showUsers(users: List<GithubUserEntity>) {
+        usersAdapter.submitList(users)
     }
 
     override fun showError(error: Throwable) {
         Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onUserClick(user: GithubUserEntity) {
+        presenter.displayUser(user)
     }
 
     override fun backPressed() = presenter.backPressed()

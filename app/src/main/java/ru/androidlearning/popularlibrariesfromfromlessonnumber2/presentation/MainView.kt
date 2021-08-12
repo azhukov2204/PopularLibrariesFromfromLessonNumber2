@@ -1,4 +1,4 @@
-package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments
+package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation
 
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.SingleState

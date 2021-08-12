@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_goneMarginEnd="@dimen/default_margin_size"
-    tools:context=".fragments.login_details.LoginDetailsFragment">
+    tools:context=".presentation.user.UserFragment">
 
     <TextView
         style="@style/text_view_style"
@@ -18,7 +18,11 @@
         android:id="@+id/selected_login"
         style="@style/text_view_style"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_size"
+        android:layout_marginBottom="@dimen/default_margin_size"
+        android:drawablePadding="@dimen/default_padding_size"
+        android:gravity="center_vertical" />
 
     <Button
         android:id="@+id/return_button"

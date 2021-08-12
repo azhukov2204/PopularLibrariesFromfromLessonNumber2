@@ -1,4 +1,4 @@
-package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments
+package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation
 
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import moxy.MvpAppCompatActivity

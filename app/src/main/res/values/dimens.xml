@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="default_margin_size">5dp</dimen>
+    <dimen name="default_padding_size">16dp</dimen>
+    <integer name="avatar_image_size">50</integer>
 </resources>

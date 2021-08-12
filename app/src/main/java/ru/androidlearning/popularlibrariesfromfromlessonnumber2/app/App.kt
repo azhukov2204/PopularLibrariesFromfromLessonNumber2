@@ -9,7 +9,10 @@ class App : Application() {
         lateinit var instance: App
     }
 
-    //Временно до даггера положим это тут
+    /**
+     * Пока нет DI на основе Dagger2 мы решаем проблему
+     * по старинке используя фабрики.
+     */
     private val cicerone: Cicerone<Router> by lazy { Cicerone.create() }
     val navigatorHolder get() = cicerone.getNavigatorHolder()
     val router get() = cicerone.router

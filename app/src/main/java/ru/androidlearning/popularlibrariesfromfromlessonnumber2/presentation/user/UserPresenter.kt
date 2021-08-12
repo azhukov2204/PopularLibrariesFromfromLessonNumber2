@@ -1,17 +1,19 @@
-package ru.androidlearning.popularlibrariesfromfromlessonnumber2.fragments.login_details
+package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.user
 
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import moxy.MvpPresenter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.model.GitHubUsersRepository
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.user.repository.GitHubUsersRepository
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GithubUserEntity
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulers
 
-class LoginDetailsPresenter(
+class UserPresenter(
     private val gitHubUsersRepository: GitHubUsersRepository,
-    private val router: Router, private val userId: Long?,
+    private val router: Router,
+    private val userLogin: String?,
     private val schedulers: WorkSchedulers
-) : MvpPresenter<LoginDetailsView>() {
+) : MvpPresenter<UserView>() {
     private val disposables = CompositeDisposable()
 
     override fun onFirstViewAttach() {
@@ -20,11 +22,12 @@ class LoginDetailsPresenter(
     }
 
     private fun loadUserLoginData() {
-        userId?.let { userId ->
+        userLogin?.let { login ->
             disposables +=
-                gitHubUsersRepository.getLoginByUserId(userId)
-                    .subscribeOn(schedulers.threadIO())
+                gitHubUsersRepository.getUserByLogin(login)
+                    .map(GithubUserEntity.Mapper::map)
                     .observeOn(schedulers.threadMain())
+                    .subscribeOn(schedulers.threadIO())
                     .subscribe(
                         viewState::showUser,
                         viewState::showError,
