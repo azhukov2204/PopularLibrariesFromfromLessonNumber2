@@ -10,9 +10,9 @@ import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.FragmentUsersBinding
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GithubUserEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.users.adapter.UsersAdapter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.user.repository.GitHubUsersRepositoryFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepositoryFactory
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulersFactory
 
@@ -36,7 +36,7 @@ class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, 
         binding.usersRecyclerView.adapter = usersAdapter
     }
 
-    override fun showUsers(users: List<GithubUserEntity>) {
+    override fun showUsers(users: List<GitHubUserEntity>) {
         usersAdapter.submitList(users)
     }
 
@@ -44,7 +44,7 @@ class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, 
         Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onUserClick(user: GithubUserEntity) {
+    override fun onUserClick(user: GitHubUserEntity) {
         presenter.displayUser(user)
     }
 

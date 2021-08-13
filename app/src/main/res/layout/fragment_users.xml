@@ -9,4 +9,4 @@
     android:paddingTop="16dp"
     android:paddingBottom="16dp"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    tools:listitem="@layout/item_user" />
+    tools:listitem="@layout/text_view_item" />

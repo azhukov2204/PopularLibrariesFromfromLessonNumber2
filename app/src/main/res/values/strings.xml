@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">PopularLibrariesFromLessonNumber2</string>
-    <string name="login_selected">Login selected:</string>
+    <string name="login_selected">User selected:</string>
     <string name="return_button_text">Return</string>
     <string name="user_not_found_message">User not found</string>
+    <string name="user_repositories_not_found_message">User\'s repositories not found</string>
+    <string name="user_repository_not_found_message">User\'s repository not found</string>
+    <string name="user_repositories_title">User repositories:</string>
+    <string name="name">Name:</string>
+    <string name="full_name">Full name:</string>
+    <string name="size">Size:</string>
+    <string name="watchers_count">Watchers count:</string>
+    <string name="language">Language:</string>
+    <string name="forks_count">Forks count:</string>
+    <string name="forks">Forks:</string>
+    <string name="repository_info">Repository info:</string>
 </resources>

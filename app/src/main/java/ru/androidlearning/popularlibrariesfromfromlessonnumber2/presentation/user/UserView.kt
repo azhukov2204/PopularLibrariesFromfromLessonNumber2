@@ -1,12 +1,27 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.user
 
 import moxy.MvpView
-import moxy.viewstate.strategy.alias.SingleState
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GithubUserEntity
+import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.OneExecution
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserRepoEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
 
-@SingleState
-interface UserView: MvpView {
-    fun showUser(user: GithubUserEntity)
+interface UserView : MvpView {
+    @AddToEndSingle
+    fun showUser(user: GitHubUserEntity)
+
+    @AddToEndSingle
+    fun showRepos(gitHubUserRepos: List<GitHubUserRepoEntity>)
+
+    @AddToEndSingle
+    fun loadingLayoutIsVisible(isVisible: Boolean)
+
+    @OneExecution
     fun showError(error: Throwable)
+
+    @OneExecution
     fun showUserNotFound()
+
+    @OneExecution
+    fun showReposNotFound()
 }

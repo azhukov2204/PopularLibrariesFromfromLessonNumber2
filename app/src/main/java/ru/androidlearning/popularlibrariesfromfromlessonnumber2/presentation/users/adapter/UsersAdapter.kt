@@ -7,32 +7,32 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.ItemUserBinding
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GithubUserEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.TextViewItemBinding
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.utils.setStartDrawableCircleImageFromUrl
 
-class UsersAdapter(val itemClickListener: ItemClickListener) : ListAdapter<GithubUserEntity, UsersAdapter.UsersViewHolder>(UsersDiff) {
+class UsersAdapter(private val itemClickListener: ItemClickListener) : ListAdapter<GitHubUserEntity, UsersAdapter.UsersViewHolder>(UsersDiff) {
     inner class UsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val binding: ItemUserBinding by viewBinding(ItemUserBinding::bind)
+        private val binding: TextViewItemBinding by viewBinding(TextViewItemBinding::bind)
 
-        fun bind(user: GithubUserEntity) {
+        fun bind(user: GitHubUserEntity) {
             with(binding) {
-                userLogin.setStartDrawableCircleImageFromUrl(user.avatarUrl, root.context.resources.getInteger(R.integer.avatar_image_size) )
-                userLogin.text = user.login
+                textViewItem.setStartDrawableCircleImageFromUrl(user.avatarUrl, root.context.resources.getInteger(R.integer.avatar_image_size))
+                textViewItem.text = user.login
                 itemView.setOnClickListener { itemClickListener.onUserClick(user) }
             }
         }
     }
 
     interface ItemClickListener {
-        fun onUserClick(user: GithubUserEntity)
+        fun onUserClick(user: GitHubUserEntity)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder =
         UsersViewHolder(
             LayoutInflater
                 .from(parent.context)
-                .inflate(R.layout.item_user, parent, false)
+                .inflate(R.layout.text_view_item, parent, false)
         )
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {

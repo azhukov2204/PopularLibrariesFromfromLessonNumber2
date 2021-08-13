@@ -1,4 +1,4 @@
-package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation
+package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.main_activity
 
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter

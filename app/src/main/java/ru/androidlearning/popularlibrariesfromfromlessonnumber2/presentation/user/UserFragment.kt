@@ -11,17 +11,25 @@ import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.FragmentUserBinding
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.user.repository.GitHubUsersRepositoryFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepositoryFactory
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GithubUserEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserRepoEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.user.adapter.UserReposAdapter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulersFactory
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.utils.setStartDrawableCircleImageFromUrl
 
 private const val ARG_USER_LOGIN = "user_login"
 
-class UserFragment : MvpAppCompatFragment(R.layout.fragment_user), UserView, BackButtonListener {
-    private val binding by viewBinding(FragmentUserBinding::bind)
+class UserFragment : MvpAppCompatFragment(R.layout.fragment_user), UserView, BackButtonListener, UserReposAdapter.ItemClickListener {
+    companion object {
+        fun newInstance(login: String): Fragment = UserFragment().apply {
+            arguments = bundleOf(ARG_USER_LOGIN to login)
+        }
+    }
 
+    private val binding by viewBinding(FragmentUserBinding::bind)
+    private val userReposAdapter: UserReposAdapter = UserReposAdapter(this)
     private val login: String? by lazy { arguments?.getString(ARG_USER_LOGIN) }
     private val presenter: UserPresenter by moxyPresenter {
         UserPresenter(
@@ -35,11 +43,24 @@ class UserFragment : MvpAppCompatFragment(R.layout.fragment_user), UserView, Bac
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.returnButton.setOnClickListener { presenter.backPressed() }
+        binding.userReposRecyclerView.adapter = userReposAdapter
     }
 
-    override fun showUser(user: GithubUserEntity) {
+    override fun showUser(user: GitHubUserEntity) {
         binding.selectedLogin.setStartDrawableCircleImageFromUrl(user.avatarUrl, binding.root.context.resources.getInteger(R.integer.avatar_image_size))
         binding.selectedLogin.text = user.login
+    }
+
+    override fun loadingLayoutIsVisible(isVisible: Boolean) {
+        binding.loadingLayout.root.visibility = if (isVisible) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+    override fun showRepos(gitHubUserRepos: List<GitHubUserRepoEntity>) {
+        userReposAdapter.submitList(gitHubUserRepos)
     }
 
     override fun showError(error: Throwable) {
@@ -50,11 +71,13 @@ class UserFragment : MvpAppCompatFragment(R.layout.fragment_user), UserView, Bac
         Toast.makeText(requireContext(), getString(R.string.user_not_found_message), Toast.LENGTH_LONG).show()
     }
 
-    override fun backPressed() = presenter.backPressed()
-
-    companion object {
-        fun newInstance(login: String): Fragment = UserFragment().apply {
-            arguments = bundleOf(ARG_USER_LOGIN to login)
-        }
+    override fun showReposNotFound() {
+        Toast.makeText(requireContext(), getString(R.string.user_repositories_not_found_message), Toast.LENGTH_LONG).show()
     }
+
+    override fun onUserRepoClick(gitHubUserRepoEntity: GitHubUserRepoEntity) {
+        presenter.displayRepo(gitHubUserRepoEntity.repoUrl)
+    }
+
+    override fun backPressed() = presenter.backPressed()
 }

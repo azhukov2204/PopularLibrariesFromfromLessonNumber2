@@ -4,9 +4,9 @@ import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import moxy.MvpPresenter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GithubUserEntity
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.user.repository.GitHubUsersRepository
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.LoginDetailsFragmentScreen
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepository
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.UserFragmentScreen
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulers
 
 class UsersPresenter(
@@ -24,7 +24,7 @@ class UsersPresenter(
     private fun loadUsersList() {
         disposables +=
             usersRepository.getUsers()
-                .map { users -> users.map { GithubUserEntity.Mapper.map(it) } }
+                .map { users -> users.map { GitHubUserEntity.Mapper.map(it) } }
                 .observeOn(schedulers.threadMain())
                 .subscribeOn(schedulers.threadIO())
                 .subscribe(
@@ -33,8 +33,8 @@ class UsersPresenter(
                 )
     }
 
-    fun displayUser(user: GithubUserEntity) {
-        router.navigateTo(LoginDetailsFragmentScreen(user.login))
+    fun displayUser(user: GitHubUserEntity) {
+        router.navigateTo(UserFragmentScreen(user.login))
     }
 
     override fun onDestroy() {
