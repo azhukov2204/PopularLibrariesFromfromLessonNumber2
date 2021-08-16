@@ -29,7 +29,7 @@ class RepoInfoFragment : MvpAppCompatFragment(R.layout.fragment_repo_info), Repo
     private val repositoryUrl: String? by lazy { arguments?.getString(ARG_REPO_URL) }
     private val presenter: RepoInfoPresenter by moxyPresenter {
         RepoInfoPresenter(
-            gitHubUsersRepository = GitHubUsersRepositoryFactory.getRepository(),
+            gitHubUsersRepository = GitHubUsersRepositoryFactory.create(requireContext()),
             repositoryUrl = repositoryUrl,
             schedulers = WorkSchedulersFactory.create(),
             router = App.instance.router
@@ -57,11 +57,6 @@ class RepoInfoFragment : MvpAppCompatFragment(R.layout.fragment_repo_info), Repo
         Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
     }
 
-    override fun showRepoNotFound() {
-        Toast.makeText(requireContext(), getString(R.string.user_repository_not_found_message), Toast.LENGTH_LONG).show()
-    }
-
     override fun backPressed(): Boolean =
         presenter.backPressed()
 }
-

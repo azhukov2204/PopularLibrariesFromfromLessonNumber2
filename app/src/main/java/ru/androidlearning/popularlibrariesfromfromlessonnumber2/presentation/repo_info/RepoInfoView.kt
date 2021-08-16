@@ -11,7 +11,4 @@ interface RepoInfoView : MvpView {
 
     @OneExecution
     fun showError(error: Throwable)
-
-    @OneExecution
-    fun showRepoNotFound()
 }

@@ -1,13 +1,14 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository
 
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.datasource.cache.GitHubUserCacheFactory
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.datasource.cloud.GitHubUserDataSourceFactory
+import android.content.Context
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cache.GitHubUserCacheFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cloud.GitHubUserCloudFactory
 
 object GitHubUsersRepositoryFactory {
-    private val gitHubUsersRepository: GitHubUsersRepository = GitHubUsersRepositoryImpl(
-        GitHubUserDataSourceFactory.create(),
-        GitHubUserCacheFactory.create()
-    )
 
-    fun getRepository(): GitHubUsersRepository = gitHubUsersRepository
+    fun create(context: Context): GitHubUsersRepository =
+        GitHubUsersRepositoryImpl(
+            GitHubUserCloudFactory.create(),
+            GitHubUserCacheFactory.create(context)
+        )
 }

@@ -32,8 +32,7 @@ class UserPresenter(
                     .subscribeOn(schedulers.threadIO())
                     .subscribe(
                         this::doOnSuccessLoadUserLoginData,
-                        viewState::showError,
-                        viewState::showUserNotFound
+                        viewState::showError
                     )
         }
     }
@@ -52,8 +51,7 @@ class UserPresenter(
                 .subscribeOn(schedulers.threadIO())
                 .subscribe(
                     this::doOnSuccessLoadUserReposData,
-                    this::doOnErrorLoadUserReposData,
-                    this::doOnCompleteLoadUserReposData
+                    this::doOnErrorLoadUserReposData
                 )
         }
     }
@@ -65,11 +63,6 @@ class UserPresenter(
 
     private fun doOnErrorLoadUserReposData(error: Throwable) {
         viewState.showError(error)
-        viewState.loadingLayoutIsVisible(false)
-    }
-
-    private fun doOnCompleteLoadUserReposData() {
-        viewState.showReposNotFound()
         viewState.loadingLayoutIsVisible(false)
     }
 

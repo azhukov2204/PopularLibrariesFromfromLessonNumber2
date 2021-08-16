@@ -1,0 +1,5 @@
+package ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cloud
+
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.GitHubUserDataSource
+
+interface GitHubUserCloud : GitHubUserDataSource

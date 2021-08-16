@@ -12,7 +12,7 @@ data class GitHubUserRepoEntity(
             GitHubUserRepoEntity(
                 repo.id,
                 repo.name.uppercase(),
-                repo.url
+                repo.repoUrl
             )
     }
 }
