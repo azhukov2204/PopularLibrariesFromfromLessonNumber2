@@ -7,8 +7,9 @@ import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserR
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserRepoInfo
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cache.GitHubUserCache
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cloud.GitHubUserCloud
+import javax.inject.Inject
 
-class GitHubUsersRepositoryImpl(
+class GitHubUsersRepositoryImpl @Inject constructor(
     private val gitHubUserCloud: GitHubUserCloud,
     private val gitHubUserCache: GitHubUserCache
 ) : GitHubUsersRepository {

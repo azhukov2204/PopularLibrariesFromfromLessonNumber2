@@ -8,8 +8,6 @@ object UserReposDiff : DiffUtil.ItemCallback<GitHubUserRepoEntity>() {
         oldItem.id == newItem.id &&
                 oldItem.name == newItem.name
 
-
     override fun areContentsTheSame(oldItem: GitHubUserRepoEntity, newItem: GitHubUserRepoEntity): Boolean =
         oldItem == newItem
-
 }

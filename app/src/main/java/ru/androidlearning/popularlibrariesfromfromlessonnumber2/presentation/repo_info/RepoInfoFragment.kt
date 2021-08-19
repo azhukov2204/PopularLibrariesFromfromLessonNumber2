@@ -5,19 +5,20 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import by.kirich1409.viewbindingdelegate.viewBinding
-import moxy.MvpAppCompatFragment
+import com.github.terrakok.cicerone.Router
 import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepositoryFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepository
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.FragmentRepoInfoBinding
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserRepoInfoEntity
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulersFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.inject_templates.DaggerMvpFragment
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulers
+import javax.inject.Inject
 
 private const val ARG_REPO_URL = "repository_url"
 
-class RepoInfoFragment : MvpAppCompatFragment(R.layout.fragment_repo_info), RepoInfoView, BackButtonListener {
+class RepoInfoFragment : DaggerMvpFragment(R.layout.fragment_repo_info), RepoInfoView, BackButtonListener {
     companion object {
         fun newInstance(repositoryUrl: String) =
             RepoInfoFragment().apply {
@@ -25,14 +26,21 @@ class RepoInfoFragment : MvpAppCompatFragment(R.layout.fragment_repo_info), Repo
             }
     }
 
+    @Inject
+    lateinit var router: Router
+    @Inject
+    lateinit var schedulers: WorkSchedulers
+    @Inject
+    lateinit var gitHubUsersRepository: GitHubUsersRepository
+
     private val binding by viewBinding(FragmentRepoInfoBinding::bind)
     private val repositoryUrl: String? by lazy { arguments?.getString(ARG_REPO_URL) }
     private val presenter: RepoInfoPresenter by moxyPresenter {
         RepoInfoPresenter(
-            gitHubUsersRepository = GitHubUsersRepositoryFactory.create(requireContext()),
+            gitHubUsersRepository = gitHubUsersRepository,
             repositoryUrl = repositoryUrl,
-            schedulers = WorkSchedulersFactory.create(),
-            router = App.instance.router
+            schedulers = schedulers,
+            router = router
         )
     }
 

@@ -8,8 +8,9 @@ import io.reactivex.rxjava3.core.Single
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepository
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
-class ImageToCacheSaverImpl(
+class ImageToCacheSaverImpl @Inject constructor(
     private val gitHubUsersRepository: GitHubUsersRepository,
     private val context: Context
 ) : ImageToCacheSaver {

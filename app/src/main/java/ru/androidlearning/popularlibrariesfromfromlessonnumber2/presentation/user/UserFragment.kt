@@ -6,37 +6,45 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import by.kirich1409.viewbindingdelegate.viewBinding
-import moxy.MvpAppCompatFragment
+import com.github.terrakok.cicerone.Router
 import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepositoryFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepository
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.FragmentUserBinding
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.CachedImageLoader
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserRepoEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.inject_templates.DaggerMvpFragment
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.user.adapter.UserReposAdapter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulersFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulers
+import javax.inject.Inject
 
 private const val ARG_USER_LOGIN = "user_login"
 
-class UserFragment : MvpAppCompatFragment(R.layout.fragment_user), UserView, BackButtonListener, UserReposAdapter.ItemClickListener {
+class UserFragment : DaggerMvpFragment(R.layout.fragment_user), UserView, BackButtonListener, UserReposAdapter.ItemClickListener {
     companion object {
         fun newInstance(login: String): Fragment = UserFragment().apply {
             arguments = bundleOf(ARG_USER_LOGIN to login)
         }
     }
 
+    @Inject
+    lateinit var router: Router
+    @Inject
+    lateinit var schedulers: WorkSchedulers
+    @Inject
+    lateinit var gitHubUsersRepository: GitHubUsersRepository
+
     private val binding by viewBinding(FragmentUserBinding::bind)
     private val userReposAdapter: UserReposAdapter = UserReposAdapter(this)
     private val login: String? by lazy { arguments?.getString(ARG_USER_LOGIN) }
     private val presenter: UserPresenter by moxyPresenter {
         UserPresenter(
-            gitHubUsersRepository = GitHubUsersRepositoryFactory.create(requireContext()),
-            router = App.instance.router,
+            gitHubUsersRepository = gitHubUsersRepository,
+            router = router,
             userLogin = login,
-            schedulers = WorkSchedulersFactory.create()
+            schedulers = schedulers
         )
     }
 
