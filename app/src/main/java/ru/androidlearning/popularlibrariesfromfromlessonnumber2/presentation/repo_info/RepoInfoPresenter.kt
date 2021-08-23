@@ -26,8 +26,7 @@ class RepoInfoPresenter(
                     .subscribeOn(schedulers.threadIO())
                     .subscribe(
                         viewState::showRepoInfo,
-                        viewState::showError,
-                        viewState::showRepoNotFound
+                        viewState::showError
                     )
         }
     }

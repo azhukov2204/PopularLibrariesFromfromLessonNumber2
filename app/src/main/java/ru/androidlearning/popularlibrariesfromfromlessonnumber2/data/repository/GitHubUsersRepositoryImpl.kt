@@ -1,37 +1,46 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository
 
-import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUser
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserRepo
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserRepoInfo
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.datasource.GitHubUserDataSource
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.datasource.cache.GitHubUserCache
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cache.GitHubUserCache
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cloud.GitHubUserCloud
 
 class GitHubUsersRepositoryImpl(
-    private val gitHubUsersDataSource: GitHubUserDataSource,
+    private val gitHubUserCloud: GitHubUserCloud,
     private val gitHubUserCache: GitHubUserCache
 ) : GitHubUsersRepository {
 
     override fun getUsers(): Observable<List<GitHubUser>> =
         Observable.merge(
             gitHubUserCache.getUsers().toObservable(),
-            gitHubUsersDataSource.getUsers().flatMap {
-                gitHubUserCache.retain(it)
-            }.toObservable()
+            gitHubUserCloud.getUsers().toObservable()
+                .flatMap { gitHubUserCache.retain(it).toObservable() }
         )
 
-    override fun getUserByLogin(login: String): Maybe<GitHubUser> =
-        gitHubUserCache.getUserByLogin(login)
-            .switchIfEmpty(gitHubUsersDataSource.getUserByLogin(login))
+    override fun getUserByLogin(login: String): Observable<GitHubUser> =
+        Observable.merge(
+            gitHubUserCache.getUserByLogin(login).toObservable(),
+            gitHubUserCloud.getUserByLogin(login).toObservable()
+                .flatMap { gitHubUserCache.retain(it).toObservable() }
+        )
 
-    override fun getUserRepositories(repositoriesUrl: String): Maybe<List<GitHubUserRepo>> =
-        gitHubUserCache.getUserRepositories(repositoriesUrl)
-            .switchIfEmpty(gitHubUsersDataSource.getUserRepositories(repositoriesUrl)
-                .flatMap { gitHibUserRepos -> gitHubUserCache.retain(repositoriesUrl, gitHibUserRepos).toMaybe() })
+    override fun getUserRepositories(repositoriesUrl: String): Observable<List<GitHubUserRepo>> =
+        Observable.merge(
+            gitHubUserCache.getUserRepositories(repositoriesUrl).toObservable(),
+            gitHubUserCloud.getUserRepositories(repositoriesUrl).toObservable()
+                .flatMap { gitHubUserRepos -> gitHubUserCache.retain(repositoriesUrl, gitHubUserRepos).toObservable() }
+        )
 
-    override fun getUserRepositoryInfo(repositoryUrl: String): Maybe<GitHubUserRepoInfo> =
-        gitHubUserCache.getUserRepositoryInfo(repositoryUrl)
-            .switchIfEmpty(gitHubUsersDataSource.getUserRepositoryInfo(repositoryUrl)
-                .flatMap { gitHubUserRepoInfo -> gitHubUserCache.retain(repositoryUrl, gitHubUserRepoInfo).toMaybe() })
+    override fun getUserRepositoryInfo(repositoryUrl: String): Observable<GitHubUserRepoInfo> =
+        Observable.merge(
+            gitHubUserCache.getUserRepositoryInfo(repositoryUrl).toObservable(),
+            gitHubUserCloud.getUserRepositoryInfo(repositoryUrl).toObservable()
+                .flatMap { gitHubUserRepoInfo -> gitHubUserCache.retain(repositoryUrl, gitHubUserRepoInfo).toObservable() }
+        )
+
+    override fun saveAvatarCachedPath(userId: Long, outputFileName: String): Single<String> =
+        gitHubUserCache.saveAvatarCachedPath(userId, outputFileName)
 }

@@ -1,4 +1,4 @@
-package ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.api
+package ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cloud.api
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

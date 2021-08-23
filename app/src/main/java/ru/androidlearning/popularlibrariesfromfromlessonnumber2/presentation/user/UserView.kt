@@ -18,10 +18,4 @@ interface UserView : MvpView {
 
     @OneExecution
     fun showError(error: Throwable)
-
-    @OneExecution
-    fun showUserNotFound()
-
-    @OneExecution
-    fun showReposNotFound()
 }
