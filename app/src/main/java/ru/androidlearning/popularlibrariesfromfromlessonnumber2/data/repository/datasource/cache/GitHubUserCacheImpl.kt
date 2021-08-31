@@ -25,9 +25,13 @@ class GitHubUserCacheImpl @Inject constructor(private val gitHubStorage: GitHubS
             .toSingle()
 
     override fun retain(repositoriesUrl: String, userRepositories: List<GitHubUserRepo>): Single<List<GitHubUserRepo>> =
-        userRepositories
-            .map { gitHubUseRepo -> gitHubUseRepo.apply { reposUrl = repositoriesUrl } }
-            .let { gitHubUsers ->
+        Single.just(userRepositories)
+            .map { gitHubUserRepos ->
+                gitHubUserRepos.onEach {
+                    it.reposUrl = repositoriesUrl
+                }
+            }
+            .flatMapCompletable { gitHubUsers ->
                 gitHubStorage
                     .gitHubUserRepoDao()
                     .retain(gitHubUsers)
