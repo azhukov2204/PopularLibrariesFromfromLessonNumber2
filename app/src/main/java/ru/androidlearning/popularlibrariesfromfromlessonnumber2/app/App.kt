@@ -1,24 +1,20 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.app
 
-import android.app.Application
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.di.DaggerApplicationComponent
 
-class App : Application() {
-    companion object {
-        lateinit var instance: App
-    }
+class App : DaggerApplication() {
 
-    /**
-     * Пока нет DI на основе Dagger2 мы решаем проблему
-     * по старинке используя фабрики.
-     */
-    private val cicerone: Cicerone<Router> by lazy { Cicerone.create() }
-    val navigatorHolder get() = cicerone.getNavigatorHolder()
-    val router get() = cicerone.router
-
-    override fun onCreate() {
-        super.onCreate()
-        instance = this
-    }
+    override fun applicationInjector(): AndroidInjector<App> =
+        DaggerApplicationComponent
+            .builder()
+            .withContext(applicationContext).apply {
+                val cicerone: Cicerone<Router> = Cicerone.create()
+                withRouter(cicerone.router)
+                withNavigatorHolder(cicerone.getNavigatorHolder())
+            }
+            .build()
 }

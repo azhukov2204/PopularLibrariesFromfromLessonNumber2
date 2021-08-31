@@ -5,8 +5,9 @@ import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUser
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserRepo
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserRepoInfo
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cloud.api.GitHubApi
+import javax.inject.Inject
 
-class GitHubUserCloudImpl(private val gitHubApi: GitHubApi) :
+class GitHubUserCloudImpl @Inject constructor(private val gitHubApi: GitHubApi) :
     GitHubUserCloud {
     override fun getUsers(): Maybe<List<GitHubUser>> =
         gitHubApi.getUsers()

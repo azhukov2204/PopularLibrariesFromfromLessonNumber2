@@ -6,8 +6,9 @@ import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUser
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserRepo
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.GitHubUserRepoInfo
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.datasource.cache.storage.GitHubStorage
+import javax.inject.Inject
 
-class GitHubUserCacheImpl(private val gitHubStorage: GitHubStorage) : GitHubUserCache {
+class GitHubUserCacheImpl @Inject constructor(private val gitHubStorage: GitHubStorage) : GitHubUserCache {
 
     override fun retain(users: List<GitHubUser>): Single<List<GitHubUser>> =
         gitHubStorage
@@ -24,9 +25,13 @@ class GitHubUserCacheImpl(private val gitHubStorage: GitHubStorage) : GitHubUser
             .toSingle()
 
     override fun retain(repositoriesUrl: String, userRepositories: List<GitHubUserRepo>): Single<List<GitHubUserRepo>> =
-        userRepositories
-            .map { gitHubUseRepo -> gitHubUseRepo.apply { reposUrl = repositoriesUrl } }
-            .let { gitHubUsers ->
+        Single.just(userRepositories)
+            .map { gitHubUserRepos ->
+                gitHubUserRepos.onEach {
+                    it.reposUrl = repositoriesUrl
+                }
+            }
+            .flatMapCompletable { gitHubUsers ->
                 gitHubStorage
                     .gitHubUserRepoDao()
                     .retain(gitHubUsers)

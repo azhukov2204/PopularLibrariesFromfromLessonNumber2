@@ -6,30 +6,40 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import by.kirich1409.viewbindingdelegate.viewBinding
-import moxy.MvpAppCompatFragment
+import com.github.terrakok.cicerone.Router
 import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.image_cache.ImageToCacheSaverFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.image_cache.ImageToCacheSaver
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepository
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.databinding.FragmentUsersBinding
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.users.adapter.UsersAdapter
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.data.repository.GitHubUsersRepositoryFactory
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.CachedImageLoader
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulersFactory
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.GitHubUserEntity
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.inject_templates.DaggerMvpFragment
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.users.adapter.UsersAdapter
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.scheduler.WorkSchedulers
+import javax.inject.Inject
 
-class UsersFragment : MvpAppCompatFragment(R.layout.fragment_users), UsersView, BackButtonListener, UsersAdapter.ItemClickListener, CachedImageLoader.ItemImageToCacheSaver {
+class UsersFragment : DaggerMvpFragment(R.layout.fragment_users), UsersView, BackButtonListener, UsersAdapter.ItemClickListener, CachedImageLoader.ItemImageToCacheSaver {
     companion object {
         fun newInstance(): Fragment = UsersFragment()
     }
 
+    @Inject
+    lateinit var schedulers: WorkSchedulers
+    @Inject
+    lateinit var router: Router
+    @Inject
+    lateinit var usersRepository: GitHubUsersRepository
+    @Inject
+    lateinit var imageToCacheSaver: ImageToCacheSaver
+
     private val presenter: UsersPresenter by moxyPresenter {
         UsersPresenter(
-            usersRepository = GitHubUsersRepositoryFactory.create(requireContext()),
-            router = App.instance.router,
-            schedulers = WorkSchedulersFactory.create(),
-            imageToCacheSaver = ImageToCacheSaverFactory.create(requireContext())
+            usersRepository = usersRepository,
+            router = router,
+            schedulers = schedulers,
+            imageToCacheSaver = imageToCacheSaver
         )
     }
     private val binding by viewBinding(FragmentUsersBinding::bind)

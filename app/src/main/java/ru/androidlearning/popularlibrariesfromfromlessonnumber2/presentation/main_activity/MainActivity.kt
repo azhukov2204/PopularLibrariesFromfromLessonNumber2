@@ -1,24 +1,31 @@
 package ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.main_activity
 
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.R
-import ru.androidlearning.popularlibrariesfromfromlessonnumber2.app.App
 import ru.androidlearning.popularlibrariesfromfromlessonnumber2.navigation.BackButtonListener
+import ru.androidlearning.popularlibrariesfromfromlessonnumber2.presentation.inject_templates.DaggerMvpActivity
+import javax.inject.Inject
 
-class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
+class MainActivity : DaggerMvpActivity(R.layout.activity_main), MainView {
+    @Inject
+    lateinit var router: Router
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
     private val navigator = AppNavigator(this, R.id.container)
-    private val presenter by moxyPresenter { MainPresenter(App.instance.router) }
+    private val presenter by moxyPresenter { MainPresenter(router) }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        App.instance.navigatorHolder.setNavigator(navigator)
+        navigatorHolder.setNavigator(navigator)
     }
 
     override fun onPause() {
         super.onPause()
-        App.instance.navigatorHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
     }
 
     override fun onBackPressed() {
